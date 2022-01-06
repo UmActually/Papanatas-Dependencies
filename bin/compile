@@ -20,8 +20,8 @@ BUILD_DIR=${1:-}
 cd $BUILD_DIR
 
 PROFILE_PATH=".profile.d/ffmpeg_opus_ytdl.sh"
-echo 'export PATH="$PATH:/app/vendor/ffmpeg:/app/vendor/opus/bin:/app/vendor/ytdl"' >> $PROFILE_PATH
-echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/app/vendor/opus/lib"' >> $PROFILE_PATH
+echo 'export PATH="$PATH:/app/vendor/ffmpeg:/app/vendor/opus:/app/vendor/ytdl"' >> $PROFILE_PATH
+echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/app/vendor/lib"' >> $PROFILE_PATH
 
 if [ -f vendor ]; then
   echo "Removing vendor directory" | indent
