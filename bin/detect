@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Buildpack valid for all apps
+echo "ffmpeg, opus & youtube-dl"
+exit 0

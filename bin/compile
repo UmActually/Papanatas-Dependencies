@@ -1,0 +1,100 @@
+#!/bin/sh
+
+FFMPEG_URL="https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
+OPUS_URL="https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz"
+YTDL_URL="https://yt-dl.org/downloads/latest/youtube-dl"
+
+arrow() {
+  sed -u 's/^/-----> /'
+}
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+
+# SETUP
+echo "Installing Papanatas dependencies" | arrow
+
+BUILD_DIR=${1:-}
+cd $BUILD_DIR
+
+PROFILE_PATH=".profile.d/ffmpeg_opus_ytdl.sh"
+echo 'export PATH="$PATH:/app/vendor/ffmpeg:/app/vendor/opus/bin:/app/vendor/ytdl"' >> $PROFILE_PATH
+echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/app/vendor/opus/lib"' >> $PROFILE_PATH
+
+if [ -f vendor ]; then
+  echo "Removing vendor directory" | indent
+  rm -r vendor
+fi
+
+echo "Making new directories" | indent
+mkdir vendor
+cd vendor
+mkdir ffmpeg opus ytdl
+
+
+# FFMPEG
+echo "Installing ffmpeg" | arrow
+
+cd ffmpeg
+echo "Downloading" | indent
+code=$(curl "$FFMPEG_URL" -L --silent --fail --retry 5 --retry-max-time 15 -o ffmpeg.tar.xz --write-out "%{http_code}")
+if [ "$code" != "200" ]; then
+  echo "Unable to download ffmpeg: $code" | indent && exit 1
+fi
+
+echo "Unpacking" | indent
+tar -xJf "ffmpeg.tar.xz" --strip-components=1 --overwrite
+if [ "$?" != "0" ]; then
+  echo "Failed to unpack ffmpeg" | indent && exit 1
+fi
+rm "ffmpeg.tar.xz"
+
+echo "Done" | indent
+
+
+# OPUS
+echo "Installing opus" | arrow
+
+cd ../opus
+echo "Downloading" | indent
+code=$(curl "$OPUS_URL" -L --silent --fail --retry 5 --retry-max-time 15 -o opus.tar.gz --write-out "%{http_code}")
+if [ "$code" != "200" ]; then
+  echo "Unable to download opus: $code" | indent && exit 1
+fi
+
+echo "Unpacking" | indent
+tar -xf "opus.tar.gz" --strip-components=1 --overwrite
+if [ "$?" != "0" ]; then
+  echo "Failed to unpack opus" | indent && exit 1
+fi
+rm "opus.tar.gz"
+
+echo "Running configure" | indent
+./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR" >/dev/null 2>&1
+
+echo "Running make install" | indent
+make -j$(nproc) install >/dev/null 2>&1
+
+echo "Done" | indent
+
+
+# YOUTUBE-DL
+echo "Installing youtube-dl" | arrow
+
+cd ../ytdl
+echo "Downloading" | indent
+code=$(curl "$YTDL_URL" -L --silent --fail --retry 5 --retry-max-time 15 -o youtube-dl --write-out "%{http_code}")
+if [ "$code" != "200" ]; then
+  echo "Unable to download youtube-dl: $code" | indent && exit 1
+fi
+
+echo "Setting executable permission" | indent
+chmod a+rx "youtube-dl"
+
+echo "Done" | indent
+
+
+cd
+echo "Papanatas dependencies installed" | arrow
