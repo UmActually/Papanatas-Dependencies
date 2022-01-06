@@ -69,6 +69,7 @@ tar -xf "opus.tar.gz" --strip-components=1 --overwrite
 if [ "$?" != "0" ]; then
   echo "Failed to unpack opus" | indent && exit 1
 fi
+ls -a
 rm "opus.tar.gz"
 
 echo "Running configure" | indent
