@@ -72,10 +72,11 @@ fi
 rm "opus.tar.gz"
 
 echo "Running configure" | indent
-./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR/vendor"
+./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR/vendor" >/dev/null 2>&1
 
 echo "Running make install" | indent
-make; make -j$(nproc) install
+make >/dev/null 2>&1
+make -j$(nproc) install >/dev/null 2>&1
 
 echo "Done" | indent
 
