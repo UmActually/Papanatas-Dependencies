@@ -75,7 +75,7 @@ echo "Running configure" | indent
 ./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR/vendor"
 
 echo "Running make install" | indent
-make -j$(nproc) install
+make; make -j$(nproc) install
 
 echo "Done" | indent
 
