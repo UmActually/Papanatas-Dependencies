@@ -69,14 +69,13 @@ tar -xf "opus.tar.gz" --strip-components=1 --overwrite
 if [ "$?" != "0" ]; then
   echo "Failed to unpack opus" | indent && exit 1
 fi
-ls -a
 rm "opus.tar.gz"
 
 echo "Running configure" | indent
-./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR" >/dev/null 2>&1
+./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR/vendor"
 
 echo "Running make install" | indent
-make -j$(nproc) install >/dev/null 2>&1
+make -j$(nproc) install
 
 echo "Done" | indent
 
