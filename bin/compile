@@ -54,33 +54,6 @@ rm "ffmpeg.tar.xz"
 echo "Done" | indent
 
 
-# OPUS
-echo "Installing opus" | arrow
-
-cd ../opus
-echo "Downloading" | indent
-code=$(curl "$OPUS_URL" -L --silent --fail --retry 5 --retry-max-time 15 -o opus.tar.gz --write-out "%{http_code}")
-if [ "$code" != "200" ]; then
-  echo "Unable to download opus: $code" | indent && exit 1
-fi
-
-echo "Unpacking" | indent
-tar -xf "opus.tar.gz" --strip-components=1 --overwrite
-if [ "$?" != "0" ]; then
-  echo "Failed to unpack opus" | indent && exit 1
-fi
-rm "opus.tar.gz"
-
-echo "Running configure" | indent
-./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR/vendor" >/dev/null 2>&1
-
-echo "Running make install" | indent
-make >/dev/null 2>&1
-make -j$(nproc) install >/dev/null 2>&1
-
-echo "Done" | indent
-
-
 # YOUTUBE-DL
 echo "Installing youtube-dl" | arrow
 
@@ -99,3 +72,32 @@ echo "Done" | indent
 
 cd
 echo "Papanatas dependencies installed" | arrow
+
+
+# OPUS
+if [ "$INSTALL_OPUS" = "1" ]; then
+  echo "Installing opus" | arrow
+
+  cd ../opus
+  echo "Downloading" | indent
+  code=$(curl "$OPUS_URL" -L --silent --fail --retry 5 --retry-max-time 15 -o opus.tar.gz --write-out "%{http_code}")
+  if [ "$code" != "200" ]; then
+    echo "Unable to download opus: $code" | indent && exit 1
+  fi
+
+  echo "Unpacking" | indent
+  tar -xf "opus.tar.gz" --strip-components=1 --overwrite
+  if [ "$?" != "0" ]; then
+    echo "Failed to unpack opus" | indent && exit 1
+  fi
+  rm "opus.tar.gz"
+
+  echo "Running configure" | indent
+  ./configure --disable-dependency-tracking --disable-doc --prefix="$BUILD_DIR/vendor" >/dev/null 2>&1
+
+  echo "Running make install" | indent
+  make >/dev/null 2>&1
+  make -j$(nproc) install >/dev/null 2>&1
+
+  echo "Done" | indent
+fi
