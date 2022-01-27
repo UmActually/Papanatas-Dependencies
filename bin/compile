@@ -68,9 +68,15 @@ echo "Setting executable permission" | indent
 chmod a+rx "youtube-dl"
 
 echo "Done" | indent
-
-
 cd
+
+
+# SPACY ES LANGUAGE
+echo "Downloading taco" | arrow
+python -m spacy download "es_core_news_sm"
+echo "Done" | indent
+
+
 echo "Papanatas dependencies installed" | arrow
 
 
